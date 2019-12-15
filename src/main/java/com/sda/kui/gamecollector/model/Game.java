@@ -115,4 +115,12 @@ public class Game {
     public void setStudios(List<Studio> studios) {
         this.studios = studios;
     }
+
+    public List<Tag> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
+    }
 }
