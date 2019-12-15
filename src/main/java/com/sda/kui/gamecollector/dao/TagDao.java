@@ -6,13 +6,15 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.List;
+
 public class TagDao {
 
     public static void save(Tag tag) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
-        session.save(tag);
+        session.saveOrUpdate(tag);
         transaction.commit();
         session.close();
 
@@ -27,6 +29,15 @@ public class TagDao {
         query.executeUpdate();
         transaction.commit();
         session.close();
+
+    }
+
+    public List<Tag> getAllTags(){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Tag");
+
+        return query.list();
 
 
     }

@@ -5,6 +5,7 @@ import com.sda.kui.gamecollector.model.Publisher;
 import com.sda.kui.gamecollector.util.hibernate.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 public class PublisherDao {
 
@@ -13,10 +14,20 @@ public class PublisherDao {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
-        session.save(publisher);
+        session.saveOrUpdate(publisher);
         transaction.commit();
         session.close();
 
+    }
+    public static void deleteAll() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("delete from Publisher");
+
+        query.executeUpdate();
+        transaction.commit();
+        session.close();
     }
 
 
