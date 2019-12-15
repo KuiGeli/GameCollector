@@ -1,10 +1,8 @@
 package com.sda.kui.gamecollector;
 
-import com.sda.kui.gamecollector.dao.GameDao;
-import com.sda.kui.gamecollector.dao.PlatformDao;
-import com.sda.kui.gamecollector.dao.PublisherDao;
-import com.sda.kui.gamecollector.dao.StudioDao;
+import com.sda.kui.gamecollector.dao.*;
 import com.sda.kui.gamecollector.model.*;
+import com.sda.kui.gamecollector.services.TagService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +37,17 @@ public class App {
 ////        PublisherDao.save(frontier1);
 ////        StudioDao.save(frontier);
 //        GameDao.insertNewGame(elite);
+
+
+//
+//        Tag tag = new Tag();
+//
+//        tag.setTag("Space Simulator");
+//
+//        TagService.addGameToTag(GameDao.getGameById(14), tag);
+//
+//        TagDao.save(tag);
+
         System.out.println(GameDao.getGameById(14));
 
 

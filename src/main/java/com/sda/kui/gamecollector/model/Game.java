@@ -50,12 +50,21 @@ public class Game {
     )
     List<Studio> studios = new ArrayList<>();
 
+    @ManyToMany(cascade = {CascadeType.ALL})
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(
+            name = "game_tag",
+            joinColumns = {@JoinColumn(name = "game_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")}
+    )
+    List<Tag> tags = new ArrayList<>();
+
     @Override
     public String toString() {
         return "Game{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", status=" + status +" "+ platforms +" "+ publishers +" "+ studios +
+                ", status=" + status +" "+ platforms +" "+ publishers +" "+ studios + tags +
                 '}';
     }
 

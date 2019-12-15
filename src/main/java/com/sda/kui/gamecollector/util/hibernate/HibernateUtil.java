@@ -29,6 +29,7 @@ public class HibernateUtil {
                 configuration.addAnnotatedClass(Platform.class);
                 configuration.addAnnotatedClass(Publisher.class);
                 configuration.addAnnotatedClass(Studio.class);
+                configuration.addAnnotatedClass(Tag.class);
 
 
 
