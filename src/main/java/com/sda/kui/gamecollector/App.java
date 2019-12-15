@@ -37,7 +37,7 @@ public class App {
 ////        PublisherDao.save(frontier1);
 ////        StudioDao.save(frontier);
 //        GameDao.insertNewGame(elite);
-        //asdasdasdasd
+
 
 
 //
