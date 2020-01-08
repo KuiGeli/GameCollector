@@ -61,11 +61,7 @@ public class Game {
 
     @Override
     public String toString() {
-        return "Game{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status=" + status +" "+ platforms +" "+ publishers +" "+ studios + tags +
-                '}';
+        return name + ": " + status;
     }
 
     public int getId() {

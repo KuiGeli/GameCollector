@@ -12,13 +12,13 @@ public class GameService {
 
 
 
-    public void viewAllGames(){
+    public List<Game> getAllGames(){
         List<Game> games = gameDao.getAllGames();
 
         for (Game game : games){
             System.out.println(game);
         }
-
+        return games;
     }
 
     public void addTagToGame(Game game, String tagName){
@@ -49,8 +49,5 @@ public class GameService {
         game.getStudios().add(studio);
         gameDao.save(game);
     }
-
-
-
 
 }

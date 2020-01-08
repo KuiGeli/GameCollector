@@ -13,6 +13,22 @@ public class App extends AppView {
 
     public static void main(String[] args) {
         launch();
+
+//        GameDao gameDao = new GameDao();
+//        GameService gameService = new GameService();
+//        Game game = new Game();
+//
+//        game.setName("Bloodborne");
+//        game.setStatus(Status.PLAYING);
+//        gameService.addPlatformToGame(game, "PS4");
+//        gameService.addPublisherToGame(game, "FromSoftware");
+//        gameService.addStudioToGame(game, "FromSoftware");
+//        gameService.addTagToGame(game, "Horror");
+//
+//
+//        gameDao.save(game);
+
+
     }
 
 
