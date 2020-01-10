@@ -64,6 +64,12 @@ public class Game {
         return name + ": " + status;
     }
 
+    public String longToString(){
+
+        return name + ": " + status + ", " + platforms + ", " + publishers + ", " + studios + ", " + tags;
+
+    }
+
     public int getId() {
         return id;
     }
