@@ -15,14 +15,12 @@ public class Platform {
     @Column
     private String platform;
 
-    @ManyToMany(mappedBy = "platforms")
+    @ManyToMany(mappedBy = "platforms", fetch = FetchType.EAGER)
     private List<Game> games = new ArrayList<>();
 
     @Override
     public String toString() {
-        return "Platform{" +
-                "platform='" + platform + '\'' +
-                '}';
+        return platform;
     }
 
     public Platform(String platform, List<Game> games) {

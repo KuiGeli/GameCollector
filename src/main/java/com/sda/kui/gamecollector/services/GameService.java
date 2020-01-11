@@ -1,6 +1,7 @@
 package com.sda.kui.gamecollector.services;
 
 import com.sda.kui.gamecollector.dao.GameDao;
+import com.sda.kui.gamecollector.dao.PlatformDao;
 import com.sda.kui.gamecollector.model.*;
 
 import java.util.List;
@@ -9,6 +10,7 @@ public class GameService {
 
 
     GameDao gameDao = new GameDao();
+    PlatformDao platformDao = new PlatformDao();
 
 
 
@@ -31,9 +33,22 @@ public class GameService {
     public void addPlatformToGame(Game game, String platName){
         Platform platform = new Platform();
         platform.setPlatform(platName);
-        game.getPlatforms().add(platform);
-        gameDao.save(game);
+        int i = 0;
+       for (Platform platform1 : platformDao.getAllPlatforms()){
+           if(platform1.getPlatform().equalsIgnoreCase(platName)){
+              Platform platform2 = platformDao.getByName(platName);
+              platform2.getGames().add(game);
+              platformDao.save(platform2);
+              i++;
+              break;
+           }
+       }
+        if(i==0) {
+            game.getPlatforms().add(platform);
 
+
+            gameDao.save(game);
+        }
     }
 
     public void addPublisherToGame(Game game, String publisherName){
@@ -47,6 +62,10 @@ public class GameService {
         Studio studio = new Studio();
         studio.setStudio(studioName);
         game.getStudios().add(studio);
+        gameDao.save(game);
+    }
+
+    public void saveGame(Game game){
         gameDao.save(game);
     }
 

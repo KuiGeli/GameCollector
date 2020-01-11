@@ -1,5 +1,6 @@
 package com.sda.kui.gamecollector.model;
 
+import com.sda.kui.gamecollector.services.GeneralService;
 import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -12,6 +13,8 @@ import java.util.List;
 @Table(name = "game_list")
 public class Game {
 
+
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -23,7 +26,7 @@ public class Game {
     @Enumerated(value = EnumType.STRING)
     private Status status;
 
-    @ManyToMany( cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @LazyCollection(LazyCollectionOption.FALSE)
     @JoinTable(
             name = "game_platform",
@@ -66,7 +69,8 @@ public class Game {
 
     public String longToString(){
 
-        return name + ": " + status + ", " + platforms + ", " + publishers + ", " + studios + ", " + tags;
+        return name + ": " + status + ", " + "Platforms: " + GeneralService.listView(platforms) + "Publishers: " + GeneralService.listView(publishers)
+                 + "Studios: " + GeneralService.listView(studios) + "Tags: " + GeneralService.listView(tags);
 
     }
 

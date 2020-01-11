@@ -7,18 +7,29 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.List;
+
 public class PlatformDao {
 
-    public static void save(Platform platform){
+    public  List<Platform> getAllPlatforms(){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from Platform");
+
+        return query.list();
+
+    }
+
+    public  void save(Platform platform){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
         session.saveOrUpdate(platform);
         transaction.commit();
+
         session.close();
 
     }
-    public static void deleteAll() {
+    public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -27,6 +38,18 @@ public class PlatformDao {
         query.executeUpdate();
         transaction.commit();
         session.close();
+    }
+    public Platform getByName(String name) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Platform where platform = ?0");
+        query.setParameter(0, name);
+
+        List<Platform> platform = query.list();
+
+        session.close();
+        return platform.get(0);
+
     }
 
 }

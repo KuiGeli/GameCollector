@@ -44,6 +44,18 @@ public class GameDao {
         return game.get(0);
 
     }
+    public Game getByPlatform(String platform) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Game as g left join Platform as p where p.platform = ?0");
+        query.setParameter(0, platform);
+
+        List<Game> game = query.list();
+
+        session.close();
+        return game.get(0);
+
+    }
 
     public List<Game> getByStatus(Status status){
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -67,7 +79,7 @@ public class GameDao {
 
     }
 
-    public static void deleteAll() {
+    public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -77,5 +89,18 @@ public class GameDao {
         transaction.commit();
         session.close();
     }
+
+    public void deleteByName(String name){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("delete from Game where name = ?0");
+        query.setParameter(0, name);
+
+        query.executeUpdate();
+        transaction.commit();
+        session.close();
+    }
+
 
 }

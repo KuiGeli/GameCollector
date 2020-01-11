@@ -12,9 +12,13 @@ import java.util.List;
 public class App extends AppView {
 
     public static void main(String[] args) {
-        launch();
+//        launch();
 
-//        GameDao gameDao = new GameDao();
+
+        GameDao gameDao = new GameDao();
+        System.out.println(gameDao.getByPlatform("PS4"));
+
+//        gameDao.deleteByName("God of War");
 //        GameService gameService = new GameService();
 //        Game game = new Game();
 //

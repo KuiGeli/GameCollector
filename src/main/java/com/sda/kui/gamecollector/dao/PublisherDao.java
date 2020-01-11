@@ -7,15 +7,26 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.List;
+
 public class PublisherDao {
 
+    public List<Publisher> getAllPublishers(){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Query query = session.createQuery("from Publisher");
 
-    public static void save(Publisher publisher){
+        return query.list();
+
+    }
+
+
+    public void save(Publisher publisher){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-
-        session.saveOrUpdate(publisher);
-        transaction.commit();
+        if (!getAllPublishers().contains(publisher)){
+            session.saveOrUpdate(publisher);
+            transaction.commit();
+        }
         session.close();
 
     }

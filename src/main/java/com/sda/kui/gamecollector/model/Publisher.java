@@ -21,9 +21,7 @@ public class Publisher {
 
     @Override
     public String toString() {
-        return "Publisher{" +
-                "publisher='" + publisher + '\'' +
-                '}';
+        return publisher;
     }
 
     public Publisher(String publisher, List<Game> games) {

@@ -22,9 +22,7 @@ public class Studio {
 
     @Override
     public String toString() {
-        return "Studio{" +
-                "studio='" + studio + '\'' +
-                '}';
+        return studio;
     }
 
     public Studio(String studio, List<Game> games) {
