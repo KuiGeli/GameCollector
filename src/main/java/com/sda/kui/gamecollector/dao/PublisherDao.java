@@ -30,7 +30,7 @@ public class PublisherDao {
         session.close();
 
     }
-    public static void deleteAll() {
+    public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -39,6 +39,18 @@ public class PublisherDao {
         query.executeUpdate();
         transaction.commit();
         session.close();
+    }
+    public Publisher getByName(String name) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Publisher where name = ?0");
+        query.setParameter(0, name);
+
+        List<Publisher> game = query.list();
+
+        session.close();
+        return game.get(0);
+
     }
 
 

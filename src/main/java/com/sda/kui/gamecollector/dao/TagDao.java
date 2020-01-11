@@ -10,7 +10,9 @@ import java.util.List;
 
 public class TagDao {
 
-    public static void save(Tag tag) {
+
+
+    public void save(Tag tag) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -20,7 +22,7 @@ public class TagDao {
 
     }
 
-    public static void deleteAll() {
+    public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -39,6 +41,19 @@ public class TagDao {
 
         return query.list();
 
+
+    }
+
+    public Tag getByName(String name) {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Tag where name = ?0");
+        query.setParameter(0, name);
+
+        List<Tag> game = query.list();
+
+        session.close();
+        return game.get(0);
 
     }
 

@@ -15,19 +15,20 @@ import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
+import org.hibernate.exception.ConstraintViolationException;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 
-//todo add search by
-//todo add function
 public class AppView extends Application {
 
     GameDao gameDao = new GameDao();
@@ -89,7 +90,6 @@ public class AppView extends Application {
         vBoxName.setFillWidth(false);
 
 
-
 // Elements to search for games
 
         Label nameSearchLabel = new Label("Search by:");
@@ -98,54 +98,31 @@ public class AppView extends Application {
         VBox vBoxSearchBy = new VBox();
         vBoxSearchBy.getChildren().addAll(nameSearchLabel, searchChoiceBox);
 
+
         ChoiceBox statusChoiceBox = new ChoiceBox(FXCollections.observableArrayList("NEW", "PLAYING", "FINISHED"));
         TextField searchTextField = new TextField();
         searchChoiceBox.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-               String selected = searchChoiceBox.getSelectionModel().getSelectedItem();
+                String selected = searchChoiceBox.getSelectionModel().getSelectedItem();
 
-               if (selected.equalsIgnoreCase("Status")){
-                    if(!vBoxSearchBy.getChildren().contains(statusChoiceBox)) {
-                        vBoxSearchBy.getChildren().add(statusChoiceBox);
-                    }else if (vBoxSearchBy.getChildren().contains(searchTextField)){
-                        vBoxSearchBy.getChildren().remove(searchTextField);
-                    }
-               }else {
-                    if(!vBoxSearchBy.getChildren().contains(searchTextField)) {
-                        vBoxSearchBy.getChildren().add(searchTextField);
-                    } else if(vBoxSearchBy.getChildren().contains(statusChoiceBox)){
-                        vBoxSearchBy.getChildren().remove(statusChoiceBox);
-                    }
-               }
+                if (vBoxSearchBy.getChildren().contains(statusChoiceBox)) {
+                    vBoxSearchBy.getChildren().remove(statusChoiceBox);
+                }
+                if (vBoxSearchBy.getChildren().contains(searchTextField)) {
+                    vBoxSearchBy.getChildren().remove(searchTextField);
+                }
+
+                if (selected.equalsIgnoreCase("Status")) {
+                    vBoxSearchBy.getChildren().add(statusChoiceBox);
+                }
+                if (!selected.equalsIgnoreCase("Status") && selected != null) {
+                    vBoxSearchBy.getChildren().add(searchTextField);
+                }
+
 
             }
         });
-
-//        Label statusSearchLabel = new Label("Search by status:");
-//        ChoiceBox choiceBoxSearch = new ChoiceBox(FXCollections.observableArrayList("New", "PLaying", "Finished"));
-//        VBox vBoxSearchByStatus = new VBox();
-//        vBoxSearchByStatus.getChildren().addAll(statusSearchLabel, choiceBoxSearch);
-//
-//        Label platformSearchLabel = new Label("Search by platform:");
-//        TextField textFieldSearchByPlatform = new TextField();
-//        VBox vBoxSearchByPlatform = new VBox();
-//        vBoxSearchByPlatform.getChildren().addAll(platformSearchLabel, textFieldSearchByPlatform);
-//
-//        Label publisherSearchLabel = new Label("Search by publisher:");
-//        TextField textFieldSearchByPublisher = new TextField();
-//        VBox vBoxSearchByPublisher = new VBox();
-//        vBoxSearchByPublisher.getChildren().addAll(publisherSearchLabel, textFieldSearchByPublisher);
-//
-//        Label studioSearchLabel = new Label("Search by studio:");
-//        TextField textFieldSearchByStudio = new TextField();
-//        VBox vBoxSearchByStudio = new VBox();
-//        vBoxSearchByStudio.getChildren().addAll(studioSearchLabel, textFieldSearchByStudio);
-//
-//        Label tagSearchLabel = new Label("Search by tag:");
-//        TextField textFieldSearchByTag = new TextField();
-//        VBox vBoxSearchByTag = new VBox();
-//        vBoxSearchByTag.getChildren().addAll(tagSearchLabel, textFieldSearchByTag);
 
         Button searchButton = new Button("Search");
 
@@ -202,49 +179,63 @@ public class AppView extends Application {
         vBox.setSpacing(30);
 
 
-        button.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-                if(nameTextField.getText() != null && choiceBox.getValue() != null &&
-                        platformTextField.getText() != null && publisherTextField.getText() != null && studioTextField.getText() != null
-                        && tagTextField.getText() != null){
-                    Game game = new Game();
-                    game.setName(nameTextField.getText());
-                    game.setStatus(Status.valueOf(choiceBox.getSelectionModel().getSelectedItem().toString()));
-                    gameService.addPlatformToGame(game, platformTextField.getText());
-                    gameService.addPublisherToGame(game, publisherTextField.getText());
-                    gameService.addStudioToGame(game, studioTextField.getText());
-                    gameService.addTagToGame(game, tagTextField.getText());
-                    gameService.saveGame(game);
+        try {
 
-                }else {
-                    System.out.println("ERROR");
+
+            button.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
+                public void handle(ActionEvent event) {
+                    if (nameTextField.getText() != null && choiceBox.getValue() != null &&
+                            platformTextField.getText() != null && publisherTextField.getText() != null && studioTextField.getText() != null
+                            && tagTextField.getText() != null) {
+                        Game game = new Game();
+                        game.setName(nameTextField.getText());
+                        game.setStatus(Status.valueOf(choiceBox.getSelectionModel().getSelectedItem().toString()));
+                        try {
+
+                            gameService.addPlatformToGame(game, platformTextField.getText());
+                            gameService.addPublisherToGame(game, publisherTextField.getText());
+                            gameService.addStudioToGame(game, studioTextField.getText());
+                            gameService.addTagToGame(game, tagTextField.getText());
+                            gameService.saveGame(game);
+                        } catch (Exception e){
+                            System.out.println("ERROR");
+                        }
+                    }
+                    games.clear();
+                    games.addAll(gameDao.getAllGames());
+                    gameListView.refresh();
                 }
-            gameListView.refresh();
-            }
-        });
+            });
 
-        searchButton.setOnAction(new EventHandler<ActionEvent>() {
+        } catch (Exception cVE){
+            System.out.println("Error");
+        }
+
+        searchButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
-            public void handle(ActionEvent event) {
-                switch (statusChoiceBox.getSelectionModel().getSelectedItem().toString()){
+            public void handle(MouseEvent event) {
+                switch (searchChoiceBox.getSelectionModel().getSelectedItem().toString()) {
                     case "Name":
-                        gameListView.getItems().clear();
                         List<Game> gameList = new ArrayList<>();
-                        gameList.add( gameDao.getByName(searchTextField.getText()));
+                        gameList.add(gameDao.getByName(searchTextField.getText()));
                         ObservableList<Game> gamesByName = FXCollections.observableList(gameList);
-//                     gameListView.setItems( gameList);
+                        gameListView.setItems( gamesByName);
+                        gameListView.refresh();
+                        break;
                     case "Status":
                         gameListView.getItems().clear();
                         ObservableList<Game> gamesByStatus = FXCollections.observableList(
                                 gameDao.getByStatus(Status.valueOf(statusChoiceBox.getSelectionModel().getSelectedItem().toString())));
                         gameListView.setItems(gamesByStatus);
                         gameListView.refresh();
+                        break;
                     case "Platform":
                         gameListView.getItems().clear();
-//                        ObservableList<Game> gameByPlatform = FXCollections.observableList(
-//                                gameDao.getB
-//                        )
+                        ObservableList<Game> gameByPlatform = FXCollections.observableList(gameDao.getByPlatform(searchTextField.getText()));
+                        gameListView.setItems(gameByPlatform);
+                        gameListView.refresh();
+                        break;
                 }
             }
         });
