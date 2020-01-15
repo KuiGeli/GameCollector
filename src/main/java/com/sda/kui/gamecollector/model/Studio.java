@@ -16,7 +16,7 @@ public class Studio {
     @Column(name = "st_name")
     private String studio;
 
-    @ManyToMany(mappedBy = "studios")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "studios")
     private List<Game> games = new ArrayList<>();
 
 

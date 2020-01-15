@@ -7,10 +7,12 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.util.List;
+
 public class StudioDao {
 
 
-    public static void save(Studio studio) {
+    public void save(Studio studio) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -19,7 +21,7 @@ public class StudioDao {
         session.close();
 
     }
-    public static void deleteAll() {
+    public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -28,6 +30,40 @@ public class StudioDao {
         query.executeUpdate();
         transaction.commit();
         session.close();
+    }
+
+    public void deleteByName(String name){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+
+        Query query = session.createQuery("delete from Studio where studio = ?0");
+        query.setParameter(0, name);
+
+        query.executeUpdate();
+        transaction.commit();
+        session.close();
+    }
+
+    public Studio getByName(String name){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Studio where studio = ?0");
+        query.setParameter(0, name);
+
+        Studio studio = (Studio) query.getSingleResult();
+        session.close();
+        return studio;
+    }
+
+    public List<Studio> getAllStudios(){
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        Query query = session.createQuery("from Studio");
+
+        List<Studio> studios = query.list();
+
+        session.close();
+        return studios;
     }
 
 }

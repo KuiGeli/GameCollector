@@ -15,7 +15,10 @@ public class PlatformDao {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Query query = session.createQuery("from Platform");
 
-        return query.list();
+        List<Platform> platforms = query.list();
+
+        session.close();
+        return platforms;
 
     }
 

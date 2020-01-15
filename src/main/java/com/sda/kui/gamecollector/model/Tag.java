@@ -16,7 +16,7 @@ public class Tag {
     @Column
     private String tag;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tags")
     List<Game> games = new ArrayList<>();
 
 

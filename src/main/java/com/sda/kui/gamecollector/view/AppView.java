@@ -127,17 +127,51 @@ public class AppView extends Application {
         Button searchButton = new Button("Search");
 
 
+//        Controls to manipulate an existing game
+
+
+        Button deleteGameButton = new Button("Delete");
+
+        Label addToGameLabel = new Label("Add: ");
+        ChoiceBox<String> addToGameChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(
+                "Platform", "Publisher", "Studio", "Tag"
+        ));
+        TextField addTGameTextField = new TextField();
+        Button addToGameButton = new Button("Add");
+        VBox addToGameVBox = new VBox();
+        addToGameVBox.getChildren().addAll(addToGameLabel, addToGameChoiceBox, addTGameTextField, addToGameButton);
+        addToGameVBox.setSpacing(5);
+
+        Label changeGameStatusLabel = new Label("Change status:");
+        ChoiceBox<String> changeGameStatusChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList(
+                "NEW", "PLAYING", "FINISHED"
+        ));
+        Button changeGameStatusButton = new Button("Change status");
+
+        VBox statusChangeVBox = new VBox();
+        statusChangeVBox.getChildren().addAll(changeGameStatusLabel, changeGameStatusChoiceBox, changeGameStatusButton);
+        statusChangeVBox.setSpacing(5);
+
+
+        HBox gameControlHBox = new HBox();
+        gameControlHBox.getChildren().addAll(addToGameVBox, statusChangeVBox, deleteGameButton);
+        gameControlHBox.visibleProperty().setValue(false);
+        gameControlHBox.setSpacing(50);
+
+
+
 //Elements to show the list of games
 
         Text text = new Text();
         text.setWrappingWidth(500);
 
+        Button refreshList = new Button("Refresh List");
 
         ListView<Game> gameListView = new ListView<>();
         ObservableList<Game> games = FXCollections.observableList(gameDao.getAllGames());
         gameListView.setItems(games);
         VBox vBoxList = new VBox();
-        vBoxList.getChildren().add(gameListView);
+        vBoxList.getChildren().addAll(refreshList, gameListView);
         vBoxList.setAlignment(Pos.BOTTOM_RIGHT);
         vBoxList.setFillWidth(false);
         HBox gameInfoHBox = new HBox();
@@ -147,10 +181,8 @@ public class AppView extends Application {
         gameListView.setOnMouseClicked(event -> {
 
             text.setText(gameListView.getSelectionModel().getSelectedItem().longToString());
-
-
+            gameControlHBox.visibleProperty().setValue(true);
         });
-
 //        vBoxList.getChildren().add(text);
         gameInfoHBox.getChildren().add(text);
 
@@ -174,44 +206,50 @@ public class AppView extends Application {
         hBox.setSpacing(20);
 
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(title, hBox, gameInfoHBox);
+        vBox.getChildren().addAll(title, hBox, gameInfoHBox, gameControlHBox);
         vBox.setAlignment(Pos.CENTER);
         vBox.setSpacing(30);
 
+        //Refresh List Button method
+        refreshList.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
 
-        try {
+//                if(!gameListView.getItems().isEmpty()) {
+//                    gameListView.getItems().removeAll();
+//                }
+                gameListView.setItems(games);
+                gameListView.refresh();
+            }
+        });
+
+// Add new game Button method
+        button.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (nameTextField.getText() != null && choiceBox.getValue() != null &&
+                        platformTextField.getText() != null && publisherTextField.getText() != null && studioTextField.getText() != null
+                        && tagTextField.getText() != null) {
+                    Game game = new Game();
+                    game.setName(nameTextField.getText());
+                    game.setStatus(Status.valueOf(choiceBox.getSelectionModel().getSelectedItem().toString()));
 
 
-            button.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    if (nameTextField.getText() != null && choiceBox.getValue() != null &&
-                            platformTextField.getText() != null && publisherTextField.getText() != null && studioTextField.getText() != null
-                            && tagTextField.getText() != null) {
-                        Game game = new Game();
-                        game.setName(nameTextField.getText());
-                        game.setStatus(Status.valueOf(choiceBox.getSelectionModel().getSelectedItem().toString()));
-                        try {
+                    gameService.addPlatformToGame(game, platformTextField.getText());
+                    gameService.addPublisherToGame(game, publisherTextField.getText());
+                    gameService.addStudioToGame(game, studioTextField.getText());
+                    gameService.addTagToGame(game, tagTextField.getText());
+                    gameService.saveGame(game);
 
-                            gameService.addPlatformToGame(game, platformTextField.getText());
-                            gameService.addPublisherToGame(game, publisherTextField.getText());
-                            gameService.addStudioToGame(game, studioTextField.getText());
-                            gameService.addTagToGame(game, tagTextField.getText());
-                            gameService.saveGame(game);
-                        } catch (Exception e){
-                            System.out.println("ERROR");
-                        }
-                    }
-                    games.clear();
-                    games.addAll(gameDao.getAllGames());
-                    gameListView.refresh();
                 }
-            });
+                games.clear();
+                games.addAll(gameDao.getAllGames());
+                gameListView.refresh();
+            }
+        });
 
-        } catch (Exception cVE){
-            System.out.println("Error");
-        }
 
+// Search Button Method
         searchButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
@@ -220,7 +258,7 @@ public class AppView extends Application {
                         List<Game> gameList = new ArrayList<>();
                         gameList.add(gameDao.getByName(searchTextField.getText()));
                         ObservableList<Game> gamesByName = FXCollections.observableList(gameList);
-                        gameListView.setItems( gamesByName);
+                        gameListView.setItems(gamesByName);
                         gameListView.refresh();
                         break;
                     case "Status":
@@ -236,9 +274,88 @@ public class AppView extends Application {
                         gameListView.setItems(gameByPlatform);
                         gameListView.refresh();
                         break;
+                    case "Publisher":
+                        gameListView.getItems().clear();
+                        ObservableList<Game> gameByPublisher = FXCollections.observableList(gameDao.getByPublisher(searchTextField.getText()));
+                        gameListView.setItems(gameByPublisher);
+                        gameListView.refresh();
+                        break;
+                    case "Studio":
+                        gameListView.getItems().clear();
+                        ObservableList<Game> gameByStudio = FXCollections.observableList(gameDao.getByStudio(searchTextField.getText()));
+                        gameListView.setItems(gameByStudio);
+                        gameListView.refresh();
+                        break;
+                    case "Tag":
+                        gameListView.getItems().clear();
+                        ObservableList gameByTag = FXCollections.observableList(gameDao.getByTag(searchTextField.getText()));
+                        gameListView.setItems(gameByTag);
+                        gameListView.refresh();
+                        break;
                 }
             }
         });
+
+
+
+        //Delete button method
+
+        deleteGameButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                String game = gameListView.getSelectionModel().getSelectedItem().getName();
+                gameDao.deleteByName(game);
+//                gameListView.getItems().clear();
+                gameListView.setItems(games);
+                gameListView.refresh();
+            }
+        });
+
+        //Change game status Button Method
+
+        changeGameStatusButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                Game game =  gameListView.getSelectionModel().getSelectedItem();
+               game.setStatus(Status.valueOf(changeGameStatusChoiceBox.getSelectionModel().getSelectedItem()));
+               gameDao.save(game);
+               gameListView.refresh();
+
+            }
+        });
+
+        //Add to game Button method
+
+        addToGameButton.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                switch (addToGameChoiceBox.getSelectionModel().getSelectedItem()){
+                    case "Platform":
+                        gameService.addPlatformToGame(
+                                gameListView.getSelectionModel().getSelectedItem(),
+                                addTGameTextField.getText()
+                        );
+                        break;
+                    case "Publisher":
+                        gameService.addPublisherToGame(
+                                gameListView.getSelectionModel().getSelectedItem(),
+                                addTGameTextField.getText());
+                        break;
+                    case "Studio":
+                        gameService.addStudioToGame(
+                                gameListView.getSelectionModel().getSelectedItem(),
+                                addTGameTextField.getText());
+                        break;
+                    case "Tag":
+                        gameService.addTagToGame(
+                                gameListView.getSelectionModel().getSelectedItem(),
+                                addTGameTextField.getText()
+                        );
+                        break;
+                }
+            }
+        });
+
 
 
         Scene scene = new Scene(vBox);

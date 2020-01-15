@@ -39,15 +39,16 @@ public class TagDao {
 
         Query query = session.createQuery("from Tag");
 
-        return query.list();
+        List<Tag> tags = query.list();
 
-
+        session.close();
+        return tags;
     }
 
     public Tag getByName(String name) {
         Session session = HibernateUtil.getSessionFactory().openSession();
 
-        Query query = session.createQuery("from Tag where name = ?0");
+        Query query = session.createQuery("from Tag where tag = ?0");
         query.setParameter(0, name);
 
         List<Tag> game = query.list();

@@ -16,7 +16,7 @@ public class Publisher {
     @Column(name = "publisher_name")
     private String publisher;
 
-    @ManyToMany(mappedBy = "publishers")
+    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "publishers")
     private List<Game> games = new ArrayList<>();
 
     @Override

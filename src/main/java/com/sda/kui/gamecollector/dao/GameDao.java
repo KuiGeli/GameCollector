@@ -14,6 +14,7 @@ public class GameDao {
     PlatformDao platformDao = new PlatformDao();
     PublisherDao publisherDao = new PublisherDao();
     TagDao tagDao = new TagDao();
+    StudioDao studioDao = new StudioDao();
 
     public Game getGameById(int id) {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -26,7 +27,7 @@ public class GameDao {
 
     }
 
-    public void save(Game game)throws Exception {
+    public void save(Game game) {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
 
@@ -60,6 +61,20 @@ public class GameDao {
         }
 
         return gamesByPlatforms;
+    }
+
+    public List<Game> getByStudio(String studio){
+
+        List<Studio> studioList = studioDao.getAllStudios();
+        List<Game> gamesByStudio = new ArrayList<>();
+
+        for (Studio studio1 : studioList){
+            if(studio1.getStudio().equalsIgnoreCase(studio)){
+                gamesByStudio.addAll(studio1.getGames());
+            }
+        }
+        return gamesByStudio;
+
     }
 
     public List<Game> getByPublisher(String publisher) {
@@ -108,7 +123,10 @@ public class GameDao {
 
         Query query = session.createQuery("from Game");
 
-        return query.list();
+        List<Game> games = query.list();
+
+        session.close();
+        return games;
 
     }
 

@@ -14,9 +14,13 @@ public class App extends AppView {
     public static void main(String[] args) {
         launch();
 
+//        StudioDao studioDao = new StudioDao();
+//        studioDao.deleteByName("Santa Monica");
+
+
 //
 //        GameDao gameDao = new GameDao();
-//        System.out.println(gameDao.getByPlatform("PS4"));
+//        gameDao.deleteByName("God of War");
 
 //        gameDao.deleteByName("NewNewGame");
 //        GameService gameService = new GameService();

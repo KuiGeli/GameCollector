@@ -15,7 +15,10 @@ public class PublisherDao {
         Session session = HibernateUtil.getSessionFactory().openSession();
         Query query = session.createQuery("from Publisher");
 
-        return query.list();
+        List<Publisher> publishers = query.list();
+
+        session.close();
+        return publishers;
 
     }
 
@@ -23,12 +26,9 @@ public class PublisherDao {
     public void save(Publisher publisher){
         Session session = HibernateUtil.getSessionFactory().openSession();
         Transaction transaction = session.beginTransaction();
-        if (!getAllPublishers().contains(publisher)){
             session.saveOrUpdate(publisher);
             transaction.commit();
-        }
         session.close();
-
     }
     public void deleteAll() {
         Session session = HibernateUtil.getSessionFactory().openSession();
@@ -43,7 +43,7 @@ public class PublisherDao {
     public Publisher getByName(String name) {
         Session session = HibernateUtil.getSessionFactory().openSession();
 
-        Query query = session.createQuery("from Publisher where name = ?0");
+        Query query = session.createQuery("from Publisher where publisher = ?0");
         query.setParameter(0, name);
 
         List<Publisher> game = query.list();
