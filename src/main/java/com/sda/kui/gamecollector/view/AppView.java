@@ -168,8 +168,8 @@ public class AppView extends Application {
         Button refreshList = new Button("Refresh List");
 
         ListView<Game> gameListView = new ListView<>();
-        ObservableList<Game> games = FXCollections.observableList(gameDao.getAllGames());
-        gameListView.setItems(games);
+//        ObservableList<Game> games = FXCollections.observableList(gameDao.getAllGames());
+        gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
         VBox vBoxList = new VBox();
         vBoxList.getChildren().addAll(refreshList, gameListView);
         vBoxList.setAlignment(Pos.BOTTOM_RIGHT);
@@ -218,8 +218,8 @@ public class AppView extends Application {
 //                if(!gameListView.getItems().isEmpty()) {
 //                    gameListView.getItems().removeAll();
 //                }
-                gameListView.setItems(games);
-                gameListView.refresh();
+                gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
+//                gameListView.refresh();
             }
         });
 
@@ -242,9 +242,9 @@ public class AppView extends Application {
                     gameService.saveGame(game);
 
                 }
-                games.clear();
-                games.addAll(gameDao.getAllGames());
-                gameListView.refresh();
+//                games.clear();
+//                games.addAll(gameDao.getAllGames());
+                gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
             }
         });
 
@@ -306,8 +306,8 @@ public class AppView extends Application {
                 String game = gameListView.getSelectionModel().getSelectedItem().getName();
                 gameDao.deleteByName(game);
 //                gameListView.getItems().clear();
-                gameListView.setItems(games);
-                gameListView.refresh();
+                gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
+//                gameListView.refresh();
             }
         });
 
