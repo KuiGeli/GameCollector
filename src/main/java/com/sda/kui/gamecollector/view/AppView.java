@@ -2,15 +2,12 @@ package com.sda.kui.gamecollector.view;
 
 import com.sda.kui.gamecollector.dao.GameDao;
 import com.sda.kui.gamecollector.model.Game;
-import com.sda.kui.gamecollector.model.Platform;
-import com.sda.kui.gamecollector.model.Publisher;
 import com.sda.kui.gamecollector.model.Status;
 import com.sda.kui.gamecollector.services.GameService;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -22,12 +19,9 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
-import org.hibernate.exception.ConstraintViolationException;
 
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Observable;
 
 public class AppView extends Application {
 
@@ -168,7 +162,6 @@ public class AppView extends Application {
         Button refreshList = new Button("Refresh List");
 
         ListView<Game> gameListView = new ListView<>();
-//        ObservableList<Game> games = FXCollections.observableList(gameDao.getAllGames());
         gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
         VBox vBoxList = new VBox();
         vBoxList.getChildren().addAll(refreshList, gameListView);
@@ -215,11 +208,7 @@ public class AppView extends Application {
             @Override
             public void handle(MouseEvent event) {
 
-//                if(!gameListView.getItems().isEmpty()) {
-//                    gameListView.getItems().removeAll();
-//                }
                 gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
-//                gameListView.refresh();
             }
         });
 
@@ -242,8 +231,6 @@ public class AppView extends Application {
                     gameService.saveGame(game);
 
                 }
-//                games.clear();
-//                games.addAll(gameDao.getAllGames());
                 gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
             }
         });
@@ -305,9 +292,8 @@ public class AppView extends Application {
             public void handle(MouseEvent event) {
                 String game = gameListView.getSelectionModel().getSelectedItem().getName();
                 gameDao.deleteByName(game);
-//                gameListView.getItems().clear();
                 gameListView.setItems(FXCollections.observableList(gameDao.getAllGames()));
-//                gameListView.refresh();
+
             }
         });
 
